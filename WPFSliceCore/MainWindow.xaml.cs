@@ -27,7 +27,6 @@ namespace WPFSliceCore
 		private bool imageLoaded = false;
 		private bool outputSelected = false;
 		private bool sliceCalculated = false;
-		private bool calculated = false;
 		public string selectedImagePath { get; set; }
 		public string selectedOutputPath { get; set; }
 		public int orgWidth { get; set; }
@@ -36,6 +35,7 @@ namespace WPFSliceCore
 		public int? sliceWidth { get; set; }
 
 		public Bitmap orginal;
+		public string sliceCountToDisplay { get; set; }
 
 		public MainWindow()
 		{
@@ -59,7 +59,7 @@ namespace WPFSliceCore
 		private void ImageSelectButton_Click(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg|All files (*.*)|*.*";
+			//dialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg|All files (*.*)|*.*";
 			if (dialog.ShowDialog() == true)
 			{
 				FilenameDisplay.Text = dialog.FileName;
@@ -140,12 +140,7 @@ namespace WPFSliceCore
 			}
 		}
 
-		private void SliceButton_Click(object sender, RoutedEventArgs e)
-		{
-			SliceImage();
-		}
-
-		private void SliceImage()
+		private void DisableInterface()
 		{
 			SliceButton.IsEnabled = false;
 			Calculate.IsEnabled = false;
@@ -153,6 +148,29 @@ namespace WPFSliceCore
 			SliceHeight.IsEnabled = false;
 			OutputSelectionButton.IsEnabled = false;
 			ImageSelectButton.IsEnabled = false;
+		}
+
+		private async void EnableInterface()
+		{
+			SliceButton.IsEnabled = true;
+			Calculate.IsEnabled = true;
+			SliceWidth.IsEnabled = true;
+			SliceHeight.IsEnabled = true;
+			OutputSelectionButton.IsEnabled = true;
+			ImageSelectButton.IsEnabled = true;
+		}
+
+		private async void SliceButton_Click(object sender, RoutedEventArgs e)
+		{
+			//DisableInterface();
+			MessageBox.Show("Slicing \nDo not make changes while slicing!", "Slicing", MessageBoxButton.OK, MessageBoxImage.Warning);
+			Task.Run(SliceImage);
+			
+		}
+
+		private async Task SliceImage()
+		{
+			
 			if(!imageLoaded || !outputSelected || !sliceCalculated)
 			{
 				return;
@@ -180,15 +198,11 @@ namespace WPFSliceCore
 						string outputName = $"{selectedOutputPath}/{sliceCount.ToString()}.jpg";
 						output.Save(outputName);
 						sliceCount++;
+						sliceCountToDisplay = sliceCount.ToString();
+						//CurrentSliceBlock.Text = $"Current Slice: {sliceCount.ToString()}";
 					}
 				}
 				MessageBox.Show("Slice complete", "Slice complete!", MessageBoxButton.OK, MessageBoxImage.Information);
-				SliceButton.IsEnabled = true;
-				Calculate.IsEnabled = true;
-				SliceWidth.IsEnabled = true;
-				SliceHeight.IsEnabled = true;
-				OutputSelectionButton.IsEnabled = true;
-				ImageSelectButton.IsEnabled = true;
 			}
 		}
 	}

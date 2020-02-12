@@ -39,6 +39,7 @@
 			<TextBlock Text="Slices: " Margin="0,20,0,0" x:Name="SliceCountTextBlock"/>
 			<Button Content="Calculate" Margin="0,20,0,0" x:Name="Calculate" Click="Calculate_Click"/>
 			<Button Content="Slice!" Margin="0,20,0,0" x:Name="SliceButton" Click="SliceButton_Click"/>
+			<TextBlock x:Name="CurrentSliceBlock" Margin="0,20,0,0" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=sliceCountToDisplay}" />
 		</StackPanel>
 		<Image x:Name="DisplayImage" Grid.Row="2" Grid.Column="1" MaxHeight="100"/>
 	</Grid>
